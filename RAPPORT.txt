@@ -1,0 +1,8 @@
+
+PROJET 5 FORMATION FRONTEND
+
+	* TACHE EFFECTUEES LE 30/03/2023
+		- DEBEUGGAGE DE LA CONNEXION EN TANT QUE ADMINISTRATEUR
+			je me suis servi de la console pour localiser l'erreur pui, je l'ai retrassé dans le code.
+			correction: il était question de remplasser "employee-email-input" par "admin-email-input" à la ligne 44 et "employee-password-input" par "admin-password-input" à la ligne 45
+					comme dans le fichier LoginUI.js respectivement à la ligne 36, col 52 et ligne 38 col 55.
