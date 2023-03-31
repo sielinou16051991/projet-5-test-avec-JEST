@@ -1,16 +1,22 @@
 /**
  * @jest-environment jsdom
  */
-
 import {screen, waitFor} from "@testing-library/dom"
 import BillsUI from "../views/BillsUI.js"
 import { bills } from "../fixtures/bills.js"
-import { ROUTES_PATH} from "../constants/routes.js";
+import { ROUTES, ROUTES_PATH} from "../constants/routes.js";
 import {localStorageMock} from "../__mocks__/localStorage.js";
+import mockStore from "../__mocks__/store";
 
 import router from "../app/Router.js";
 
+// MockStore pour les tests d'intégration
+jest.mock("../app/Store", () => mockStore) 
+// Mock the navigation
+const onNavigate = (pathname) => { document.body.innerHTML = ROUTES({ pathname }) }
+
 describe("Given I am connected as an employee", () => {
+
   describe("When I am on Bills Page", () => {
     test("Then bill icon in vertical layout should be highlighted", async () => {
 
