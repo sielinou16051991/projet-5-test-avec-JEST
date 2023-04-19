@@ -52,12 +52,13 @@ describe("Given I am connected as an employee", () => {   // Étant donné que j
       // organisation
       document.body.innerHTML = BillsUI({ data: bills })  // chargement de la page
       const dates = screen.getAllByText(/^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/i).map(a => a.innerHTML)
-      
+      console.log(dates);
       // l'acte
      // const antiChrono = (a, b) => ((a < b) ? 1 : -1)   // j'ai commenté cette ligne et la suivante parceque les factures ne sont pas triées
      // const datesSorted = [...dates].sort(antiChrono)
       const datesSorted = [ '2004-04-04', '2003-03-03', '2002-02-02', '2001-01-01' ] // le test doit etre simple. ce qui resoud l'erreur de test:  expect(received).toEqual(expected) // deep equality
 
+      console.log(datesSorted);
       // l'assertion
       expect(dates).toEqual(datesSorted);
     })
