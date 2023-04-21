@@ -16,16 +16,29 @@ export default class NewBill {
     new Logout({ document, localStorage, onNavigate })
   }
   handleChangeFile = e => {
-    e.preventDefault()
-    const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
-    const filePath = e.target.value.split(/\\/g)
-    const fileName = filePath[filePath.length-1]
+    // console.log(e);
+    e.preventDefault();
+
+    const errorMessage = this.document.querySelector('.error-message');
+    const file = this.document.querySelector(`input[data-testid="file"]`).files[0];
+    // const filePath = e.target.value.split(/\\/g)
+    // const fileName = filePath[filePath.length-1]
+
+    // File name & accept formats
+    const fileName = file.name;
+    const isImage = [ 'image/jpeg', 'image/png' ].includes(file.type);
+
+    // data
     const formData = new FormData()
     const email = JSON.parse(localStorage.getItem("user")).email
     formData.append('file', file)
     formData.append('email', email)
 
-    this.store
+    if( isImage ){
+      // cacher le message d'erreur
+      errorMessage.classList.add('d-none');
+      
+      this.store
       .bills()
       .create({
         data: formData,
@@ -39,6 +52,12 @@ export default class NewBill {
         this.fileUrl = fileUrl
         this.fileName = fileName
       }).catch(error => console.error(error))
+    } else {
+      // reinitialliser les champs du formulaire et afficher le message d'erreur
+      e.target.value = '';
+      errorMessage.classList.remove('d-none');
+    }
+
   }
   handleSubmit = e => {
     e.preventDefault()
