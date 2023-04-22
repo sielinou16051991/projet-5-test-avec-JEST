@@ -10,7 +10,7 @@ import router from "../app/Router.js"
 import { localStorageMock } from "../__mocks__/localStorage.js"
 import NewBill from "../containers/NewBill.js"
 import userEvent from "@testing-library/user-event"
-import mockStore from "../__mocks__/store.js"
+import mockStore from "../__mocks__/store"
 
 //  Simulation de la navigation
 const onNavigate = (pathname) => { document.body.innerHTML = ROUTES({ pathname })}
@@ -120,13 +120,13 @@ describe('Étant donné que je suis connecté en tant qu’employé sur la page 
   describe('When API is working', () => {
      test('Ensuite, il devrait envoyer une demande de MOCK POST et retourner à la page Factures', async () => {     //  Then it should send an Mock POST request and return to the Bills Page
 
-      // Arrange
+      // Arrange or setup or configuration
       document.body.innerHTML = NewBillUI();
       const newBill = new NewBill({ document, onNavigate, store: mockStore, localStorage: window.localStorage });
       const form = screen.getByTestId('form-new-bill');
       const btnSubmit = document.getElementById("btn-send-bill");
 
-      // Mock functions
+      // Mock functions (fonction simulatrice)
       jest.spyOn(mockStore, 'bills');
       newBill.updateBill = jest.fn();
 
@@ -156,19 +156,59 @@ describe('Étant donné que je suis connecté en tant qu’employé sur la page 
         newBill.fileName = mockedBill.fileName;
         newBill.fileUrl = mockedBill.fileUrl;
 
-        // Act  : form submit
+        // Act (l'objet a tester) : form submit
         const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
+        const mockStoreBills = jest.fn(() => mockStore.bills());
         form.addEventListener('submit', handleSubmit);
         userEvent.click(btnSubmit);
         
-        //  Assert : mocked function
+        //  Assert (résultat atendu) : mocked function
         expect(handleSubmit).toHaveBeenCalled();
         expect(newBill.updateBill).toHaveBeenCalled();
         expect(newBill.updateBill).toHaveBeenCalledWith( mockedBill );
-        expect(mockStore.bills).toHaveBeenCalled();
+        expect(mockStoreBills).toHaveBeenCalled();
 
-        // Assert : returns to the Bills Page
+        // Assert (résultat atendu) : returns to the Bills Page
         expect(screen.getByTestId('Mes notes de frais')).toBeTruthy();
      });
   });
-})
+
+  describe('Lorsqu\'une erreur se produit sur l\'API de requête POST', () => {        //  When an error occurs on POST request API 
+    test('Ensuite, il devrait avoire en console un message d\'erreur', async () => {      //  Then it should console a message error
+
+      // Ararange or Setup or configuration
+      const root = document.createElement('div');
+      root.setAttribute('id', 'root');
+      document.body.append(root);
+      router();
+      window.onNavigate(ROUTES_PATH.NewBill);
+
+      // Mock functions : mockStore.bills and console.error()
+      jest.spyOn(mockStore, 'bills');
+      console.error = jest.fn();
+      mockStore.bills.mockImplementationOnce(() => {
+        return {
+          update: () => {
+            return Promise.reject(new Error('Erreur 404'));
+          },
+        };
+      });
+
+      const newBill = new NewBill({document, onNavigate, store: mockStore, localStorage: window.localStorage });
+      const form = screen.getByTestId('form-new-bill');
+      const btnSubmit = document.getElementById("btn-send-bill");
+
+      // Act (ce qu'il faut tester): soumission du formulaire
+      const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
+      form.addEventListener('submit', handleSubmit);
+      userEvent.click(btnSubmit);
+
+      // Assert (Assertion: c.a.d ce à quoi on s'attend)
+      expect(handleSubmit).toHaveBeenCalled();
+      await new Promise(process.nextTick);
+      expect(console.error).toHaveBeenCalled();
+    
+
+    });
+  });
+});
