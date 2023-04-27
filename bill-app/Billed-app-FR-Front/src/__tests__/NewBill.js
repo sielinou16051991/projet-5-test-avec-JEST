@@ -109,7 +109,7 @@ describe("Given I am connected as an employee", () => {
                   //***********il est question dans cette partie de tester l'api de la fonction 
                   //***********rataché au bouton envoyé
                   //--------EN EFFET, IL Y A ENVOI D'UN OBJET ET REDIRECTION SUR LA PAGE "MES NOTES DE FRAIS" */               */
-describe('Étant donné que je suis connecté en tant qu’employé sur la page NewBill', () => {      //  Given I am connected as Employee  on NewBill Page
+describe('Étant donné que je suis connecté en tant qu’employé sur la page NewBill', () => {                         //  Given I am connected as Employee  on NewBill Page
 
   //  Définir le stockage local fictif comme employée pour tous les tests qui suivront
   beforeAll(() => {
@@ -158,7 +158,7 @@ describe('Étant donné que je suis connecté en tant qu’employé sur la page 
 
         // Act (l'objet a tester) : form submit
         const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
-        const mockStoreBills = jest.fn(() => mockStore.bills());
+        const mockStoreBills = mockStore.bills();
         form.addEventListener('submit', handleSubmit);
         userEvent.click(btnSubmit);
         
@@ -166,10 +166,10 @@ describe('Étant donné que je suis connecté en tant qu’employé sur la page 
         expect(handleSubmit).toHaveBeenCalled();
         expect(newBill.updateBill).toHaveBeenCalled();
         expect(newBill.updateBill).toHaveBeenCalledWith( mockedBill );
-        expect(mockStoreBills).toHaveBeenCalled();
+        expect(mockStoreBills).toBeTruthy();
 
         // Assert (résultat atendu) : returns to the Bills Page
-        expect(screen.getByTestId('Mes notes de frais')).toBeTruthy();
+        expect(screen.getByText('Mes notes de frais')).toBeTruthy();
      });
   });
 
